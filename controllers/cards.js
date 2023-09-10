@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const {
   ERROR_INCORRECT_DATA,
+  ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
 } = require('../utils/errors');
 
@@ -14,7 +15,7 @@ module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove({ _id: req.params.cardId })
     .then((data) => (
       !data
-        ? res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' })
+        ? res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' })
         : res.send(data)
     ))
     .catch((err) => (
@@ -42,7 +43,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 ).then((data) => (
   !data
-    ? res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' })
+    ? res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' })
     : res.send(data)
 )).catch((err) => (
   err.name === 'CastError'
@@ -56,7 +57,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 ).then((data) => (
   !data
-    ? res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' })
+    ? res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' })
     : res.send(data)
 )).catch((err) => (
   err.name === 'CastError'

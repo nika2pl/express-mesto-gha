@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const {
   ERROR_INCORRECT_DATA,
+  ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
 } = require('../utils/errors');
 
@@ -14,7 +15,7 @@ module.exports.getUser = (req, res) => {
   User.findOne({ _id: req.params.userId })
     .then((user) => (
       !user
-        ? res.status(ERROR_INCORRECT_DATA).send({ message: 'Пользователь не найден' })
+        ? res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' })
         : res.send(user)
     )).catch((err) => (
       err.name === 'CastError'
