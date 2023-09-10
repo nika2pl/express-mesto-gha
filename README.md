@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
 
@@ -6,7 +5,6 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
 Github: https://github.com/nika2pl/express-mesto-gha
->>>>>>> 50d4e26 (init project)
 
 ## Директории
 
@@ -20,7 +18,6 @@ Github: https://github.com/nika2pl/express-mesto-gha
 
 `npm run start` — запускает сервер   
 `npm run dev` — запускает сервер с hot-reload
-<<<<<<< HEAD
-=======
+
+## Тесты
 `npm run lint` — запускает eslint
->>>>>>> 50d4e26 (init project)
