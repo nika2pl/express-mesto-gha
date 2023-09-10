@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 
-mongoose.connect('mongodb+srv://n123:K2mzvnZRZjTPFgDZ@cluster0.p9go750.mongodb.net/mestodb?retryWrites=true&w=majority', {
+mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
 
