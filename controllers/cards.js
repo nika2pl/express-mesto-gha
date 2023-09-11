@@ -17,9 +17,10 @@ module.exports.deleteCard = (req, res) => {
     .orFail()
     .then((data) => res.send(data))
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError
-        || err instanceof mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
+      } else if (err instanceof mongoose.Error.CastError) {
+        res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
       }
