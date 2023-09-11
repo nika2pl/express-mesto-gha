@@ -20,7 +20,7 @@ module.exports.deleteCard = (req, res) => {
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
       } else if (err instanceof mongoose.Error.CastError) {
-        res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' });
+        res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
       }
@@ -50,7 +50,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   if (err instanceof mongoose.Error.DocumentNotFoundError) {
     res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
   } else if (err instanceof mongoose.Error.CastError) {
-    res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' });
+    res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
   } else {
     res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
   }
@@ -64,7 +64,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   if (err instanceof mongoose.Error.DocumentNotFoundError) {
     res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
   } else if (err instanceof mongoose.Error.CastError) {
-    res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' });
+    res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
   } else {
     res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
   }
