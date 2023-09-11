@@ -4,10 +4,8 @@ const mongoose = require('mongoose');
 
 const app = express();
 
-const bodyParser = require('body-parser');
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
@@ -26,8 +24,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(usersRouter);
-app.use(cardsRouter);
+app.use('/users', usersRouter);
+app.use('/cards', cardsRouter);
 app.use((req, res, next) => {
   next(res.status(ERROR_NOT_FOUND).send({ message: 'Заданного URL не существует.' }));
 });
