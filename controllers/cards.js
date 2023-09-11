@@ -27,9 +27,10 @@ module.exports.deleteCard = (req, res) => {
 
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
+  const userId  = req.user._id;
 
-  Card.create({ name, link })
-    .then((data) => res.send(data))
+  Card.create({ name, link, owner: userId })
+    .then((data) => res.status(201).send(data))
     .catch((err) => (
       err.name === 'ValidationError'
         ? res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' })
@@ -44,7 +45,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
 ).then((data) => (
   !data
     ? res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' })
-    : res.send(data)
+    : res.status(201).send(data)
 )).catch((err) => (
   err.name === 'CastError'
     ? res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' })

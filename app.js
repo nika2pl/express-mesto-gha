@@ -11,7 +11,7 @@ const { usersRouter, cardsRouter } = require('./routes/index');
 
 const { ERROR_NOT_FOUND } = require('./utils/errors');
 
-mongoose.connect('mongodb://localhost:27017/mestodb', {
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   useNewUrlParser: true,
 });
 
