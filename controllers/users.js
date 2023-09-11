@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const {
   ERROR_INCORRECT_DATA,
+  ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
 } = require('../utils/errors');
 
@@ -17,7 +18,7 @@ module.exports.getUser = (req, res) => {
     .then((users) => res.send(users))
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
       }

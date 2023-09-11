@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Card = require('../models/card');
 const {
   ERROR_INCORRECT_DATA,
-  ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
 } = require('../utils/errors');
 
@@ -46,7 +45,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 ).orFail().then((data) => res.status(201).send(data)).catch((err) => {
   if (err instanceof mongoose.Error.CastError) {
-    res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
+    res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' });
   } else {
     res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
   }
@@ -58,7 +57,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 ).orFail().then((data) => res.send(data)).catch((err) => {
   if (err instanceof mongoose.Error.CastError) {
-    res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
+    res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' });
   } else {
     res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
   }
