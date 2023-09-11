@@ -17,8 +17,10 @@ module.exports.getUser = (req, res) => {
     .orFail()
     .then((users) => res.send(users))
     .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Переданы некорректные данные' });
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
+      } else if (err instanceof mongoose.Error.CastError) {
+        res.status(ERROR_INCORRECT_DATA).send({ message: 'Карточка не найдена' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
       }
