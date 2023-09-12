@@ -1,21 +1,23 @@
 const mongoose = require('mongoose');
 const Card = require('../models/card');
 const {
+  OK_STATUS,
+  OK_CREATED,
   ERROR_INCORRECT_DATA,
   ERROR_NOT_FOUND,
   ERROR_INTERNAL_SERVER,
-} = require('../utils/errors');
+} = require('../utils/http_codes');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((data) => res.send(data))
+    .then((data) => res.status(OK_STATUS).send(data))
     .catch((err) => res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.name} ${err.message}` }));
 };
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove({ _id: req.params.cardId })
     .orFail()
-    .then((data) => res.send(data))
+    .then((data) => res.status(OK_STATUS).send(data))
     .catch((err) => {
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
@@ -32,7 +34,7 @@ module.exports.createCard = (req, res) => {
   const userId = req.user._id;
 
   Card.create({ name, link, owner: userId })
-    .then((data) => res.status(201).send(data))
+    .then((data) => res.status(OK_CREATED).send(data))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
@@ -46,7 +48,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
   { $addToSet: { likes: req.user._id } },
   { new: true },
-).orFail().then((data) => res.status(201).send(data)).catch((err) => {
+).orFail().then((data) => res.status(OK_CREATED).send(data)).catch((err) => {
   if (err instanceof mongoose.Error.DocumentNotFoundError) {
     res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
   } else if (err instanceof mongoose.Error.CastError) {

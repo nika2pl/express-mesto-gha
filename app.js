@@ -9,7 +9,7 @@ app.use(express.json());
 
 const { usersRouter, cardsRouter } = require('./routes/index');
 
-const { ERROR_NOT_FOUND } = require('./utils/errors');
+const { ERROR_NOT_FOUND } = require('./utils/http_codes');
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   useNewUrlParser: true,
@@ -17,7 +17,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '64fc543971213f04ce34cf65',
+    _id: '64ff4ab90918aebf7f87a3d2',
   };
 
   next();
