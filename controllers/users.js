@@ -22,7 +22,7 @@ module.exports.getUser = (req, res) => {
     .then((users) => res.send(users))
     .catch((err) => {
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else if (err instanceof mongoose.Error.CastError) {
         res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
       } else {
@@ -53,7 +53,7 @@ const updateUser = (req, res, data) => {
     .then((user) => res.status(OK_STATUS).send(user))
     .catch((err) => {
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
+        res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь не найден' });
       } else if (err instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
       } else {
