@@ -54,7 +54,7 @@ const updateUser = (req, res, data) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-      } else if (err instanceof mongoose.Error.CastError) {
+      } else if (err instanceof mongoose.Error.ValidationError) {
         res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
