@@ -44,30 +44,26 @@ module.exports.createCard = (req, res) => {
     });
 };
 
-module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
-  req.params.cardId,
-  { $addToSet: { likes: req.user._id } },
-  { new: true },
-).orFail().then((data) => res.status(OK_CREATED).send(data)).catch((err) => {
-  if (err instanceof mongoose.Error.DocumentNotFoundError) {
-    res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-  } else if (err instanceof mongoose.Error.CastError) {
-    res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
-  } else {
-    res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
-  }
-});
+const updateCardLikedState = (req, res, query, httpCode) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    query,
+    { new: true },
+  ).orFail().then((data) => res.status(httpCode).send(data)).catch((err) => {
+    if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
+    } else if (err instanceof mongoose.Error.CastError) {
+      res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
+    } else {
+      res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
+    }
+  });
+};
 
-module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
-  req.params.cardId,
-  { $pull: { likes: req.user._id } },
-  { new: true },
-).orFail().then((data) => res.send(data)).catch((err) => {
-  if (err instanceof mongoose.Error.DocumentNotFoundError) {
-    res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-  } else if (err instanceof mongoose.Error.CastError) {
-    res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
-  } else {
-    res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
-  }
-});
+module.exports.likeCard = (req, res) => updateCardLikedState(req, res, {
+  $addToSet: { likes: req.user._id },
+}, OK_CREATED);
+
+module.exports.dislikeCard = (req, res) => updateCardLikedState(req, res, {
+  $pull: { likes: req.user._id },
+}, OK_STATUS);
