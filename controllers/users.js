@@ -12,6 +12,7 @@ const { SECRET_KEY } = require('../utils/config');
 const NotFound = require('../utils/errors/NotFound');
 const BadRequest = require('../utils/errors/BadRequest');
 const Conflict = require('../utils/errors/BadRequest');
+const Unauthorized = require('../utils/errors/Unauthorized');
 
 module.exports.signin = (req, res, next) => {
   const { email, password } = req.body;
@@ -21,7 +22,7 @@ module.exports.signin = (req, res, next) => {
     .then((user) => {
       bcrypt.compare(password, user.password, (err, result) => {
         if (!result) {
-          next(new NotFound('Карточка не найдена'));
+          next(new Unauthorized('Неправильный email или пароль'));
         } else {
           const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: '7d' });
 
@@ -29,13 +30,13 @@ module.exports.signin = (req, res, next) => {
           res.cookie('jwt', token, {
             maxAge: 3600000,
             httpOnly: true,
-          }).end();
+          }).send({ token });
         }
       });
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        next(new NotFound('Карточка не найдена'));
+        next(new Unauthorized('Неправильный email или пароль'));
       } else if (err instanceof mongoose.Error.CastError) {
         next(new BadRequest('Переданы некорректные данные'));
       } else {
@@ -62,7 +63,9 @@ module.exports.signup = (req, res, next) => {
         email,
         password: hash,
       })
-        .then((user) => res.status(OK_CREATED).send(user))
+        .then(() => res.status(OK_CREATED).send({
+          name, about, avatar, email,
+        }))
         .catch((err) => {
           if (err.code === 11000) {
             next(new Conflict('Email уже зарегестриован'));
