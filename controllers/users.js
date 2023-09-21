@@ -84,19 +84,15 @@ module.exports.getUsers = (req, res, next) => {
     .catch((err) => next(err));
 };
 
+module.exports.getCurrentUserInfo = (req, res, next) => {
+  User.findOne({ _id: req.user._id }).orFail().then((users) => res.send(users)).catch((err) => {
+    next(err);
+  });
+};
+
 module.exports.getUser = (req, res, next) => {
-  let userId;
-
-  if (req.method === 'GET') {
-    userId = req.user._id;
-  } else {
-    userId = req.params.userId;
-  }
-
-  User.findOne({ _id: userId })
-    .orFail()
-    .then((users) => res.send(users))
-    .catch((err) => {
+  User.findOne({ _id: req.params.userId }).orFail()
+    .then((users) => res.send(users)).catch((err) => {
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
         next(new NotFound('Пользователь не найден'));
       } else if (err instanceof mongoose.Error.CastError) {

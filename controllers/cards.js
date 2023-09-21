@@ -57,6 +57,8 @@ const updateCardLikedState = (req, res, next, query, httpCode) => {
   ).orFail().then((data) => res.status(httpCode).send(data)).catch((err) => {
     if (err instanceof mongoose.Error.CastError) {
       next(new BadRequest('Переданы некорректные данные'));
+    } else if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      next(new NotFound('Карточки не существует'));
     } else {
       next(err);
     }
