@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 
 const auth = require('./middlewares/auth');
-const { authRouter, usersRouter, cardsRouter } = require('./routes/index');
+const routeSignup = require('./routes/auth/signup');
+const routeSignin = require('./routes/auth/signin');
+const { usersRouter, cardsRouter } = require('./routes/index');
 const { INTERNAL_SERVER_STATUS } = require('./utils/http_codes');
 const NotFound = require('./utils/errors/NotFound');
 
@@ -19,7 +21,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // не требует авторизации
-app.use('/users', authRouter);
+app.use('/', routeSignup);
+app.use('/', routeSignin);
 
 app.use(auth);
 
