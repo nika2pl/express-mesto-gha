@@ -8,11 +8,12 @@ const routeSignup = require('./routes/auth/signup');
 const routeSignin = require('./routes/auth/signin');
 const { usersRouter, cardsRouter } = require('./routes/index');
 const { INTERNAL_SERVER_STATUS } = require('./utils/http_codes');
+const { URL_MONGO } = require('./utils/config');
 const NotFound = require('./utils/errors/NotFound');
 
 const app = express();
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
+mongoose.connect(URL_MONGO, {
   useNewUrlParser: true,
 });
 
