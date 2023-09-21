@@ -64,7 +64,6 @@ module.exports.signup = (req, res, next) => {
       })
         .then((user) => res.status(OK_CREATED).send(user))
         .catch((err) => {
-          console.log(err);
           if (err.code === 11000) {
             next(new Conflict('Email уже зарегестриован'));
           } else if (err instanceof mongoose.Error.ValidationError) {
