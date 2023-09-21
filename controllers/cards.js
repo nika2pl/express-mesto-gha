@@ -51,9 +51,7 @@ module.exports.createCard = (req, res, next) => {
 
 const updateCardLikedState = (req, res, next, query, httpCode) => {
   Card.findByIdAndUpdate(
-    {
-      owner: req.user._id,
-    },
+    req.params.cardId,
     query,
     { new: true },
   ).orFail().then((data) => res.status(httpCode).send(data)).catch((err) => {
