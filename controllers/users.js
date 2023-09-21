@@ -11,7 +11,7 @@ const { SECRET_KEY } = require('../utils/config');
 
 const NotFound = require('../utils/errors/NotFound');
 const BadRequest = require('../utils/errors/BadRequest');
-const Conflict = require('../utils/errors/BadRequest');
+const Conflict = require('../utils/errors/Conflict');
 const Unauthorized = require('../utils/errors/Unauthorized');
 
 module.exports.signin = (req, res, next) => {
