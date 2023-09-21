@@ -1,15 +1,20 @@
 const mongoose = require('mongoose');
+const { URL_REGEX } = require('../utils/config');
 
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minlength: 2,
-    maxlength: 30,
+    validate: {
+      validator: ({ length }) => length >= 2 && length <= 30,
+    },
   },
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: (url) => URL_REGEX.test(url),
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

@@ -1,6 +1,12 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
+
+const auth = require('./middlewares/auth');
+const { authRouter, usersRouter, cardsRouter } = require('./routes/index');
+const { INTERNAL_SERVER_STATUS } = require('./utils/http_codes');
+const NotFound = require('./utils/errors/NotFound');
 
 const app = express();
 
@@ -12,10 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-const auth = require('./middlewares/auth');
-const { authRouter, usersRouter, cardsRouter } = require('./routes/index');
-const { ERROR_NOT_FOUND } = require('./utils/http_codes');
-
 // не требует авторизации
 app.use('/users', authRouter);
 
@@ -24,8 +26,17 @@ app.use(auth);
 app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
 
-app.use((req, res, next) => {
-  next(res.status(ERROR_NOT_FOUND).send({ message: 'Заданного URL не существует.' }));
+app.use('*', (req, res, next) => {
+  next(new NotFound('Такой страницы не существует'));
+});
+
+app.use(errors()); // handle errors by celebrate
+
+app.use((err, req, res, next) => {
+  const { statusCode = INTERNAL_SERVER_STATUS, message } = err; // 500 by default
+  res.status(statusCode).send({ message });
+
+  next();
 });
 
 app.listen(3000);

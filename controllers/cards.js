@@ -3,33 +3,38 @@ const Card = require('../models/card');
 const {
   OK_STATUS,
   OK_CREATED,
-  ERROR_INCORRECT_DATA,
-  ERROR_NOT_FOUND,
-  ERROR_INTERNAL_SERVER,
 } = require('../utils/http_codes');
 
-module.exports.getCards = (req, res) => {
-  Card.find({})
-    .then((data) => res.status(OK_STATUS).send(data))
-    .catch((err) => res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.name} ${err.message}` }));
+const NotFound = require('../utils/errors/NotFound');
+const BadRequest = require('../utils/errors/BadRequest');
+const PermissionDenied = require('../utils/errors/PermissionDenied');
+
+module.exports.getCards = (req, res, next) => {
+  Card.find({}).then((data) => res.status(OK_STATUS).send(data)).catch(next);
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findByIdAndRemove({ _id: req.params.cardId })
     .orFail()
-    .then((data) => res.status(OK_STATUS).send(data))
+    .then((data) => {
+      if (!data.owner.equals(req.user._id)) {
+        throw new PermissionDenied('Нет доступа');
+      } else {
+        res.status(OK_STATUS).send(data);
+      }
+    })
     .catch((err) => {
       if (err instanceof mongoose.Error.DocumentNotFoundError) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
+        next(new NotFound('Карточка не найдена'));
       } else if (err instanceof mongoose.Error.CastError) {
-        res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequest('Переданы некорректные данные'));
       } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
+        next(err);
       }
     });
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const userId = req.user._id;
 
@@ -37,14 +42,14 @@ module.exports.createCard = (req, res) => {
     .then((data) => res.status(OK_CREATED).send(data))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
+        next(new BadRequest('Переданы некорректные данные'));
       } else {
-        res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
+        next(err);
       }
     });
 };
 
-const updateCardLikedState = (req, res, query, httpCode) => {
+const updateCardLikedState = (req, res, next, query, httpCode) => {
   Card.findByIdAndUpdate(
     {
       owner: req.user._id,
@@ -52,20 +57,18 @@ const updateCardLikedState = (req, res, query, httpCode) => {
     query,
     { new: true },
   ).orFail().then((data) => res.status(httpCode).send(data)).catch((err) => {
-    if (err instanceof mongoose.Error.DocumentNotFoundError) {
-      res.status(ERROR_NOT_FOUND).send({ message: 'Карточка не найдена' });
-    } else if (err instanceof mongoose.Error.CastError) {
-      res.status(ERROR_INCORRECT_DATA).send({ message: 'Переданы некорректные данные' });
+    if (err instanceof mongoose.Error.CastError) {
+      next(new BadRequest('Переданы некорректные данные'));
     } else {
-      res.status(ERROR_INTERNAL_SERVER).send({ message: `Произошла ошибка: ${err.message}` });
+      next(err);
     }
   });
 };
 
-module.exports.likeCard = (req, res) => updateCardLikedState(req, res, {
+module.exports.likeCard = (req, res, next) => updateCardLikedState(req, res, next, {
   $addToSet: { likes: req.user._id },
 }, OK_CREATED);
 
-module.exports.dislikeCard = (req, res) => updateCardLikedState(req, res, {
+module.exports.dislikeCard = (req, res, next) => updateCardLikedState(req, res, next, {
   $pull: { likes: req.user._id },
 }, OK_STATUS);
