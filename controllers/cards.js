@@ -14,13 +14,15 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove({ _id: req.params.cardId })
+  Card.findById({ _id: req.params.cardId })
     .orFail()
     .then((data) => {
       if (!data.owner.equals(req.user._id)) {
         throw new PermissionDenied('Нет доступа');
       } else {
-        res.status(OK_STATUS).send(data);
+        Card.deleteOne({ _id: req.params.cardId }).then((card) => {
+          res.status(OK_STATUS).send(card);
+        });
       }
     })
     .catch((err) => {

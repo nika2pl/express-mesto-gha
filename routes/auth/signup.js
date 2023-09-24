@@ -4,7 +4,7 @@ const { celebrate, Joi } = require('celebrate');
 const { URL_REGEX } = require('../../utils/config');
 const { signup } = require('../../controllers/users');
 
-router.post('/signup', celebrate({
+router.post('/', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(6),
