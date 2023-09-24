@@ -1,7 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const { errors } = require('celebrate');
 const { URL_MONGO } = require('./utils/config');
 const router = require('./routes');
 
@@ -14,7 +13,6 @@ mongoose.connect(URL_MONGO, {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(errors()); // handle errors by celebrate
 
 app.use(router);
 
