@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const { errors } = require('celebrate');
+
 const auth = require('../middlewares/auth');
 const usersRouter = require('./users');
 const cardsRouter = require('./cards');
@@ -6,7 +8,6 @@ const routeSignup = require('./auth/signup');
 const routeSignin = require('./auth/signin');
 const NotFound = require('../utils/errors/NotFound');
 const { ERROR_INTERNAL_SERVER } = require('../utils/http_codes');
-const { errors } = require('celebrate');
 
 // не требует авторизации
 router.use('/signup', routeSignup);
