@@ -1,7 +1,10 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const { URL_MONGO } = require('./utils/config');
+
+require('dotenv').config();
+const { URL_MONGO, PORT } = require('./utils/config');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes');
 
 const app = express();
@@ -13,7 +16,9 @@ mongoose.connect(URL_MONGO, {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(requestLogger); // подключаем логгер запросов
+app.use(errorLogger);
 
 app.use(router);
 
-app.listen(3000);
+app.listen(PORT);
